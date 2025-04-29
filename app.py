@@ -496,9 +496,8 @@ def fans():
     fans = Fan.query.all()
     return render_template('fans.html', title='Болельщики', fans=fans)
 
-# Создание первого администратора при запуске
-@app.before_first_request
-def create_admin():
+# Initialize database and create admin user
+with app.app_context():
     db.create_all()
     admin_exists = User.query.filter_by(email='admin@example.com').first()
     if not admin_exists:
