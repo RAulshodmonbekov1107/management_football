@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Управление тренерами{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Управление тренерами</h2>
+    <a href="{{ url_for('new_coach') }}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Добавить тренера
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if coaches %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Фамилия</th>
+                            <th>Имя</th>
+                            <th>Дата рождения</th>
+                            <th>Опыт работы (лет)</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for coach in coaches %}
+                            <tr>
+                                <td>{{ coach.coach_id }}</td>
+                                <td>{{ coach.last_name }}</td>
+                                <td>{{ coach.first_name }}</td>
+                                <td>{{ coach.birth_date.strftime('%d.%m.%Y') }}</td>
+                                <td>{{ coach.experience_years }}</td>
+                                <td>
+                                    <a href="{{ url_for('edit_coach', coach_id=coach.coach_id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> Редактировать
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ coach.coach_id }}">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                    
+                                    <!-- Modal for delete confirmation -->
+                                    <div class="modal fade" id="deleteModal{{ coach.coach_id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ coach.coach_id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel{{ coach.coach_id }}">Подтверждение удаления</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Вы действительно хотите удалить тренера "{{ coach.last_name }} {{ coach.first_name }}"?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                                    <form action="{{ url_for('delete_coach', coach_id=coach.coach_id) }}" method="POST" style="display: inline;">
+                                                        <button type="submit" class="btn btn-danger">Удалить</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                На данный момент тренеры не добавлены. <a href="{{ url_for('new_coach') }}">Добавить тренера</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}{{ legend }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0 text-white">
+                    <i class="fas fa-heart mr-2"></i>{{ legend }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.first_name.label(class="form-control-label") }}
+                                {% if form.first_name.errors %}
+                                    {{ form.first_name(class="form-control is-invalid", placeholder="Введите имя") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.first_name.errors %}
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.first_name(class="form-control", placeholder="Введите имя") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.last_name.label(class="form-control-label") }}
+                                {% if form.last_name.errors %}
+                                    {{ form.last_name(class="form-control is-invalid", placeholder="Введите фамилию") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.last_name.errors %}
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.last_name(class="form-control", placeholder="Введите фамилию") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid", placeholder="example@domain.com") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control", placeholder="example@domain.com") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.phone.label(class="form-control-label") }}
+                        {% if form.phone.errors %}
+                            {{ form.phone(class="form-control is-invalid", placeholder="+X-XXX-XXX-XXXX") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}
+                                    <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.phone(class="form-control", placeholder="+X-XXX-XXX-XXXX") }}
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle mr-1"></i>Формат: +X-XXX-XXX-XXXX
+                        </small>
+                    </div>
+                    <div class="form-group d-flex justify-content-between align-items-center mt-4">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('admin_fans') }}" class="btn btn-secondary">
+                            <i class="fas fa-times mr-1"></i>Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Enable form validation styling
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

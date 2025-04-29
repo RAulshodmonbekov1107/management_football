@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}{{ legend }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ legend }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.first_name.label(class="form-control-label") }}
+                                {% if form.first_name.errors %}
+                                    {{ form.first_name(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.first_name.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.first_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.last_name.label(class="form-control-label") }}
+                                {% if form.last_name.errors %}
+                                    {{ form.last_name(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.last_name.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.last_name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.birth_date.label(class="form-control-label") }}
+                        {% if form.birth_date.errors %}
+                            {{ form.birth_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.birth_date.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.birth_date(class="form-control", type="date") }}
+                        {% endif %}
+                        <small class="form-text text-muted">Формат: ГГГГ-ММ-ДД</small>
+                    </div>
+                    <div class="form-group">
+                        {{ form.position.label(class="form-control-label") }}
+                        {% if form.position.errors %}
+                            {{ form.position(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.position.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.position(class="form-control") }}
+                        {% endif %}
+                        <small class="form-text text-muted">Например: Нападающий, Защитник, Вратарь, Полузащитник</small>
+                    </div>
+                    <div class="form-group">
+                        {{ form.team_id.label(class="form-control-label") }}
+                        {% if form.team_id.errors %}
+                            {{ form.team_id(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.team_id.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.team_id(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('admin_players') }}" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

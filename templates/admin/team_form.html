@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{{ legend }}{% endblock %}
+
+{% block content %}
+<div class="admin-header mb-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-3">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('admin_teams') }}" class="text-primary">
+                            <i class="fas fa-users mr-1"></i>Команды
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">{{ legend }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white border-0">
+                <h4 class="mb-0">
+                    <i class="fas fa-shield-alt text-primary mr-2"></i>{{ legend }}
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group">
+                        {{ form.team_name.label(class="form-control-label") }}
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-light">
+                                    <i class="fas fa-shield-alt text-primary"></i>
+                                </span>
+                            </div>
+                            {% if form.team_name.errors %}
+                                {{ form.team_name(class="form-control is-invalid", placeholder="Введите название команды") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.team_name.errors %}
+                                        <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.team_name(class="form-control", placeholder="Введите название команды") }}
+                            {% endif %}
+                        </div>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle mr-1"></i>Название должно быть уникальным
+                        </small>
+                    </div>
+
+                    <div class="form-group d-flex justify-content-between align-items-center mt-4 mb-0">
+                        <a href="{{ url_for('admin_teams') }}" class="btn btn-secondary">
+                            <i class="fas fa-times mr-1"></i>Отмена
+                        </a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.admin-header {
+    background-color: #fff;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #6c757d;
+}
+
+.input-group-text {
+    border: none;
+    border-right: 1px solid #e0e0e0;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-control:focus {
+    border-color: #e0e0e0;
+}
+
+.form-control-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.btn {
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

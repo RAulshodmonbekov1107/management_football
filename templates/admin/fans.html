@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Управление болельщиками{% endblock %}
+
+{% block content %}
+<div class="admin-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="mb-0">
+                <i class="fas fa-users mr-2"></i>Управление болельщиками
+            </h2>
+            <p class="text-muted mb-0">Управляйте данными болельщиков</p>
+        </div>
+        <div class="col-md-6 text-md-right mt-3 mt-md-0">
+            <a href="{{ url_for('new_fan') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle mr-1"></i>Добавить болельщика
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="search-box">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light border-0">
+                                        <i class="fas fa-search text-primary"></i>
+                                    </span>
+                                </div>
+                                <input type="text" id="fanSearch" class="form-control border-0 bg-light" placeholder="Поиск болельщиков...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 text-md-right mt-3 mt-md-0">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary" id="exportCSV">
+                                <i class="fas fa-file-export mr-1"></i>Экспорт CSV
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="printList">
+                                <i class="fas fa-print mr-1"></i>Печать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {% if fans %}
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="fansTable">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0">ID</th>
+                                    <th class="border-top-0">Болельщик</th>
+                                    <th class="border-top-0">Контакты</th>
+                                    <th class="border-top-0">Регистрация</th>
+                                    <th class="border-top-0 text-right">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fan in fans %}
+                                    <tr class="fan-row">
+                                        <td>
+                                            <span class="font-weight-bold text-primary">#{{ fan.fan_id }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm mr-3">
+                                                    <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ fan.last_name }} {{ fan.first_name }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <div class="mb-1">
+                                                    <i class="fas fa-envelope text-muted mr-2"></i>
+                                                    <a href="mailto:{{ fan.email }}" class="text-body">{{ fan.email }}</a>
+                                                </div>
+                                                <div>
+                                                    <i class="fas fa-phone text-muted mr-2"></i>
+                                                    <a href="tel:{{ fan.phone }}" class="text-body">{{ fan.phone }}</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-muted">
+                                                <i class="fas fa-calendar-alt mr-2"></i>
+                                                {{ fan.registration_date.strftime('%d.%m.%Y') }}
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ fan.registration_date.strftime('%H:%M') }}
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td class="text-right">
+                                            <a href="{{ url_for('edit_fan', fan_id=fan.fan_id) }}" class="btn btn-sm btn-outline-primary mr-1">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#deleteModal{{ fan.fan_id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal{{ fan.fan_id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center p-4">
+                                                    <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                                                    <h5>Подтверждение удаления</h5>
+                                                    <p class="mb-0">Вы действительно хотите удалить болельщика "<strong>{{ fan.last_name }} {{ fan.first_name }}</strong>"?</p>
+                                                    <p class="text-muted small">Это действие нельзя будет отменить</p>
+                                                </div>
+                                                <div class="modal-footer border-0 justify-content-center">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                        <i class="fas fa-times mr-1"></i>Отмена
+                                                    </button>
+                                                    <form action="{{ url_for('delete_fan', fan_id=fan.fan_id) }}" method="POST" class="d-inline">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="fas fa-trash mr-1"></i>Удалить
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                        <h5>Нет болельщиков</h5>
+                        <p class="text-muted mb-3">На данный момент болельщики не добавлены</p>
+                        <a href="{{ url_for('new_fan') }}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle mr-1"></i>Добавить первого болельщика
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.admin-header {
+    background-color: #fff;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(26, 115, 232, 0.1);
+}
+
+.search-box .form-control {
+    padding-left: 0;
+}
+
+.search-box .input-group-text {
+    border-right: none;
+}
+
+.fan-row {
+    transition: background-color var(--transition-speed);
+}
+
+.fan-row:hover {
+    background-color: #f8f9fa;
+}
+
+.modal-content {
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.btn-group .btn {
+    border-radius: var(--border-radius) !important;
+    margin: 0 0.25rem;
+}
+
+@media print {
+    .admin-header {
+        border: none;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .table {
+        border-collapse: collapse !important;
+    }
+    
+    .table td,
+    .table th {
+        background-color: #fff !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('fanSearch');
+    const fanRows = document.getElementsByClassName('fan-row');
+    
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        Array.from(fanRows).forEach(row => {
+            const textContent = row.textContent.toLowerCase();
+            row.style.display = textContent.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Export to CSV
+    document.getElementById('exportCSV').addEventListener('click', function() {
+        let csv = 'ID,Фамилия,Имя,Email,Телефон,Дата регистрации\n';
+        Array.from(fanRows).forEach(row => {
+            const cols = row.getElementsByTagName('td');
+            const id = cols[0].textContent.trim();
+            const [lastName, firstName] = cols[1].textContent.trim().split(' ');
+            const email = cols[2].querySelector('a[href^="mailto:"]').textContent.trim();
+            const phone = cols[2].querySelector('a[href^="tel:"]').textContent.trim();
+            const date = cols[3].textContent.trim().replace(/\n/g, ' ');
+            
+            csv += [id, lastName, firstName, email, phone, date].join(',') + '\n';
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'fans.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // Print functionality
+    document.getElementById('printList').addEventListener('click', function() {
+        window.print();
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white rounded shadow-sm mb-4 p-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-futbol mr-3"></i>Футбольный портал
+            </h1>
+            <p class="lead mb-4">Актуальная информация о командах, игроках, тренерах и матчах в одном месте</p>
+            {% if not current_user.is_authenticated %}
+                <div class="cta-buttons">
+                    <a class="btn btn-light btn-lg mr-3" href="{{ url_for('register') }}">
+                        <i class="fas fa-user-plus mr-2"></i>Регистрация
+                    </a>
+                    <a class="btn btn-outline-light btn-lg" href="{{ url_for('login') }}">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Войти
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-4 text-center d-none d-md-block">
+            <i class="fas fa-trophy fa-6x text-white-50"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <div class="card stat-card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-uppercase mb-2">Команды</h6>
+                        <h2 class="mb-0">{{ teams|length }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <div class="card stat-card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-uppercase mb-2">Игроки</h6>
+                        <h2 class="mb-0">{{ players|length }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-running fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <div class="card stat-card bg-info text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-uppercase mb-2">Тренеры</h6>
+                        <h2 class="mb-0">{{ coaches|length }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-tie fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-sm-6 mb-4 mb-md-0">
+        <div class="card stat-card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-uppercase mb-2">Матчи</h6>
+                        <h2 class="mb-0">{{ matches|length }}</h2>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-futbol fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shield-alt text-primary mr-2"></i>Популярные команды
+                    </h5>
+                    <a href="{{ url_for('teams') }}" class="btn btn-sm btn-outline-primary">
+                        Все команды
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if teams %}
+                    <div class="list-group list-group-flush">
+                        {% for team in teams[:5] %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-users text-primary mr-2"></i>
+                                    {{ team.team_name }}
+                                </div>
+                                <span class="badge badge-primary badge-pill">
+                                    {{ team.players|length }} игроков
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <p class="mb-0">Команды пока не добавлены</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user text-success mr-2"></i>Лучшие игроки
+                    </h5>
+                    <a href="{{ url_for('players') }}" class="btn btn-sm btn-outline-success">
+                        Все игроки
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if players %}
+                    <div class="list-group list-group-flush">
+                        {% for player in players[:5] %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="player-avatar-sm mr-3">
+                                            <i class="fas fa-user-circle fa-2x text-success"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ player.last_name }} {{ player.first_name }}</h6>
+                                            <small class="text-muted">{{ player.team.team_name }}</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-success">
+                                        {{ player.position if player.position else 'Игрок' }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-user-slash fa-3x mb-3"></i>
+                        <p class="mb-0">Игроки пока не добавлены</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1557b0 100%);
+    border-radius: var(--border-radius);
+}
+
+.stat-card {
+    border: none;
+    border-radius: var(--border-radius);
+    transition: transform var(--transition-speed);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    opacity: 0.8;
+}
+
+.player-avatar-sm {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(52, 168, 83, 0.1);
+}
+
+.list-group-item {
+    transition: background-color var(--transition-speed);
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.cta-buttons {
+    opacity: 0.9;
+    transition: opacity var(--transition-speed);
+}
+
+.cta-buttons:hover {
+    opacity: 1;
+}
+</style>
+{% endblock %}

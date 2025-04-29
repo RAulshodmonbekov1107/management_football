@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="text-center mb-4">
+                <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                <h2 class="mb-1">Создать аккаунт</h2>
+                <p class="text-muted">Присоединяйтесь к футбольному сообществу</p>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('register') }}" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group">
+                            {{ form.username.label(class="form-control-label") }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-user text-primary"></i>
+                                    </span>
+                                </div>
+                                {% if form.username.errors %}
+                                    {{ form.username(class="form-control is-invalid", placeholder="Ваше имя пользователя") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.username.errors %}
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.username(class="form-control", placeholder="Ваше имя пользователя") }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.email.label(class="form-control-label") }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-envelope text-primary"></i>
+                                    </span>
+                                </div>
+                                {% if form.email.errors %}
+                                    {{ form.email(class="form-control is-invalid", placeholder="ваш@email.com") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.email(class="form-control", placeholder="ваш@email.com") }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.password.label(class="form-control-label") }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-lock text-primary"></i>
+                                    </span>
+                                </div>
+                                {% if form.password.errors %}
+                                    {{ form.password(class="form-control is-invalid", placeholder="••••••••") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password.errors %}
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.password(class="form-control", placeholder="••••••••") }}
+                                {% endif %}
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle mr-1"></i>Минимум 8 символов
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.confirm_password.label(class="form-control-label") }}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-lock text-primary"></i>
+                                    </span>
+                                </div>
+                                {% if form.confirm_password.errors %}
+                                    {{ form.confirm_password(class="form-control is-invalid", placeholder="••••••••") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.confirm_password.errors %}
+                                            <i class="fas fa-exclamation-circle mr-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.confirm_password(class="form-control", placeholder="••••••••") }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            {{ form.submit(class="btn btn-primary btn-lg btn-block") }}
+                        </div>
+
+                        <p class="text-center mb-0">
+                            Уже есть аккаунт? 
+                            <a href="{{ url_for('login') }}" class="text-primary font-weight-bold">
+                                Войдите
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    Регистрируясь, вы соглашаетесь с нашими условиями использования
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.auth-wrapper {
+    padding: 2rem 0;
+}
+
+.input-group-text {
+    border: none;
+    border-right: 1px solid #e0e0e0;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-control:focus {
+    border-color: #e0e0e0;
+}
+
+.form-control-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.btn-lg {
+    padding: 0.8rem 1rem;
+    font-weight: 500;
+}
+
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.form-text {
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

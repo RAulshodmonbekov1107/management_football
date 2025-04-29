@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Тренеры{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <i class="fas fa-user-tie mr-2"></i>Тренеры
+            </h2>
+            <div class="d-flex align-items-center">
+                <div class="search-box">
+                    <input type="text" class="form-control" id="coachSearch" placeholder="Поиск тренера...">
+                </div>
+            </div>
+        </div>
+        <hr class="mt-3">
+    </div>
+</div>
+
+<div class="row" id="coachesContainer">
+    {% if coaches %}
+        {% for coach in coaches %}
+            <div class="col-md-6 col-lg-4 mb-4 coach-card"
+                 data-name="{{ coach.last_name }} {{ coach.first_name }}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-tie mr-2"></i>{{ coach.last_name }} {{ coach.first_name }}
+                            </h5>
+                            <span class="badge badge-light">
+                                {{ coach.experience_years }} лет опыта
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="coach-info">
+                            <div class="text-center mb-4">
+                                <div class="coach-avatar mb-3">
+                                    <i class="fas fa-user-circle fa-4x text-primary"></i>
+                                </div>
+                                {% if coach.team %}
+                                    <div class="team-badge">
+                                        <span class="badge badge-primary">
+                                            <i class="fas fa-shield-alt mr-1"></i>{{ coach.team.team_name }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="coach-details">
+                                <div class="detail-item d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">
+                                        <i class="fas fa-calendar-alt mr-2"></i>Дата рождения
+                                    </span>
+                                    <span class="font-weight-bold">
+                                        {{ coach.birth_date.strftime('%d.%m.%Y') }}
+                                    </span>
+                                </div>
+                                
+                                <div class="detail-item d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">
+                                        <i class="fas fa-star mr-2"></i>Опыт работы
+                                    </span>
+                                    <span class="font-weight-bold">
+                                        {{ coach.experience_years }} лет
+                                    </span>
+                                </div>
+                            </div>
+
+                            {% if coach.achievements %}
+                                <div class="achievements mt-3">
+                                    <h6 class="text-muted mb-2">
+                                        <i class="fas fa-trophy mr-2"></i>Достижения
+                                    </h6>
+                                    <div class="achievement-list">
+                                        {% for achievement in coach.achievements[:3] %}
+                                            <span class="badge badge-success mb-1">{{ achievement }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <button class="btn btn-outline-primary btn-sm btn-block">
+                            <i class="fas fa-info-circle mr-1"></i>Подробнее о тренере
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x mr-3"></i>
+                <div>
+                    <h5 class="mb-1">Нет тренеров</h5>
+                    <p class="mb-0">На данный момент тренеры не добавлены в систему</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.coach-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(26, 115, 232, 0.1);
+}
+
+.coach-details {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.detail-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.team-badge {
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+}
+
+.team-badge .badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.achievements {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.achievement-list .badge {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('coachSearch');
+    const coachCards = document.getElementsByClassName('coach-card');
+
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        Array.from(coachCards).forEach(card => {
+            const coachName = card.getAttribute('data-name').toLowerCase();
+            if (coachName.includes(searchTerm)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

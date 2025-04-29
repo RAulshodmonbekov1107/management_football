@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ legend }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ legend }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.match_date.label(class="form-control-label") }}
+                        {% if form.match_date.errors %}
+                            {{ form.match_date(class="form-control is-invalid", type="date") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.match_date.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.match_date(class="form-control", type="date") }}
+                        {% endif %}
+                        <small class="form-text text-muted">Формат: ГГГГ-ММ-ДД</small>
+                    </div>
+                    <div class="form-group">
+                        {{ form.tournament.label(class="form-control-label") }}
+                        {% if form.tournament.errors %}
+                            {{ form.tournament(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.tournament.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.tournament(class="form-control") }}
+                        {% endif %}
+                        <small class="form-text text-muted">Например: Чемпионат России, Кубок Мира, Товарищеский матч</small>
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('admin_matches') }}" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

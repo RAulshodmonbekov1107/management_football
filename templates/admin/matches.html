@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Управление матчами{% endblock %}
+
+{% block content %}
+<div class="admin-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="mb-0">
+                <i class="fas fa-futbol mr-2"></i>Управление матчами
+            </h2>
+            <p class="text-muted mb-0">Управляйте расписанием матчей</p>
+        </div>
+        <div class="col-md-6 text-md-right mt-3 mt-md-0">
+            <a href="{{ url_for('new_match') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle mr-1"></i>Добавить матч
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="search-box">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light border-0">
+                                        <i class="fas fa-search text-primary"></i>
+                                    </span>
+                                </div>
+                                <input type="text" id="matchSearch" class="form-control border-0 bg-light" placeholder="Поиск матчей...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control bg-light border-0" id="tournamentFilter">
+                            <option value="">Все турниры</option>
+                            {% set tournaments = [] %}
+                            {% for match in matches %}
+                                {% if match.tournament not in tournaments %}
+                                    {% set _ = tournaments.append(match.tournament) %}
+                                    <option value="{{ match.tournament }}">{{ match.tournament }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 text-md-right mt-3 mt-md-0">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary" id="exportCSV">
+                                <i class="fas fa-file-export mr-1"></i>Экспорт CSV
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="printList">
+                                <i class="fas fa-print mr-1"></i>Печать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {% if matches %}
+                    <div class="match-list">
+                        {% for match in matches %}
+                            <div class="match-card mb-3" 
+                                 data-tournament="{{ match.tournament }}"
+                                 data-date="{{ match.match_date.strftime('%d.%m.%Y') }}">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-1">
+                                                <span class="badge badge-primary">#{{ match.match_id }}</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="match-date">
+                                                    <i class="far fa-calendar-alt text-primary mr-2"></i>
+                                                    <strong>{{ match.match_date.strftime('%d.%m.%Y') }}</strong>
+                                                    <div class="small text-muted">
+                                                        <i class="far fa-clock mr-1"></i>{{ match.match_date.strftime('%H:%M') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="tournament-info">
+                                                    <i class="fas fa-trophy text-warning mr-2"></i>
+                                                    <span class="font-weight-bold">{{ match.tournament }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 text-md-right">
+                                                <a href="{{ url_for('edit_match', match_id=match.match_id) }}" 
+                                                   class="btn btn-sm btn-outline-primary mr-2">
+                                                    <i class="fas fa-edit mr-1"></i>Редактировать
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-danger" 
+                                                        data-toggle="modal" 
+                                                        data-target="#deleteModal{{ match.match_id }}">
+                                                    <i class="fas fa-trash mr-1"></i>Удалить
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModal{{ match.match_id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-body text-center p-4">
+                                                <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                                                <h5>Подтверждение удаления</h5>
+                                                <p class="mb-0">Вы действительно хотите удалить матч турнира "<strong>{{ match.tournament }}</strong>" от {{ match.match_date.strftime('%d.%m.%Y') }}?</p>
+                                                <p class="text-muted small">Это действие нельзя будет отменить</p>
+                                            </div>
+                                            <div class="modal-footer border-0 justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                    <i class="fas fa-times mr-1"></i>Отмена
+                                                </button>
+                                                <form action="{{ url_for('delete_match', match_id=match.match_id) }}" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-trash mr-1"></i>Удалить
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-futbol fa-4x text-muted mb-3"></i>
+                        <h5>Нет матчей</h5>
+                        <p class="text-muted mb-3">На данный момент матчи не добавлены</p>
+                        <a href="{{ url_for('new_match') }}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle mr-1"></i>Добавить первый матч
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.admin-header {
+    background-color: #fff;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.search-box .form-control,
+select.form-control {
+    padding-left: 1rem;
+    height: calc(2.5rem + 2px);
+}
+
+.search-box .input-group-text {
+    border-right: none;
+}
+
+.match-card {
+    transition: transform var(--transition-speed);
+}
+
+.match-card:hover {
+    transform: translateY(-2px);
+}
+
+.match-date {
+    line-height: 1.4;
+}
+
+.tournament-info {
+    font-size: 1.1rem;
+}
+
+.modal-content {
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.btn-group .btn {
+    border-radius: var(--border-radius) !important;
+    margin: 0 0.25rem;
+}
+
+@media print {
+    .admin-header {
+        border: none;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .match-card {
+        break-inside: avoid;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('matchSearch');
+    const tournamentFilter = document.getElementById('tournamentFilter');
+    const matchCards = document.getElementsByClassName('match-card');
+
+    function filterMatches() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedTournament = tournamentFilter.value;
+        
+        Array.from(matchCards).forEach(card => {
+            const tournament = card.getAttribute('data-tournament');
+            const content = card.textContent.toLowerCase();
+            
+            const matchesSearch = content.includes(searchTerm);
+            const matchesTournament = !selectedTournament || tournament === selectedTournament;
+
+            card.style.display = matchesSearch && matchesTournament ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterMatches);
+    tournamentFilter.addEventListener('change', filterMatches);
+
+    // Export to CSV
+    document.getElementById('exportCSV').addEventListener('click', function() {
+        let csv = 'ID,Дата,Время,Турнир\n';
+        Array.from(matchCards).forEach(card => {
+            const id = card.querySelector('.badge').textContent.replace('#', '');
+            const date = card.getAttribute('data-date');
+            const time = card.querySelector('.small').textContent.trim();
+            const tournament = card.getAttribute('data-tournament');
+            
+            csv += `${id},${date},${time},${tournament}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'matches.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+
+    // Print functionality
+    document.getElementById('printList').addEventListener('click', function() {
+        window.print();
+    });
+});
+</script>
+{% endblock %}
